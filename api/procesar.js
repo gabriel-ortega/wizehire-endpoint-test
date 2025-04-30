@@ -5,7 +5,7 @@ import serverless from 'serverless-http';
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // <--- importante para leer req.body
 
 const data = {
   account: {
@@ -16,13 +16,13 @@ const data = {
   },
 };
 
-// Define el endpoint (nota: SIN `/api` aquí)
 app.post('/procesar', async (req, res) => {
-  console.log('Recibido body:', req.body);
+  console.log('Body recibido:', req.body);
+
+  // Esperar 300 milisegundos (0.3 segundos)
   await new Promise(resolve => setTimeout(resolve, 300));
+
   res.json(data);
 });
 
-// ¡Esta parte es clave!
 export default serverless(app);
-
