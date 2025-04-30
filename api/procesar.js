@@ -24,4 +24,5 @@ app.post('/procesar', async (req, res) => {
 });
 
 // ¡Esta parte es clave!
-export const handler = serverless(app);
+export default serverless(app);
+
