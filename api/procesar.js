@@ -27,7 +27,7 @@ const data = {
 
 // export default serverless(app);
 
-export function GET(request) {
-  console.log('Body recibido:', req.body);
+export function POST(request) {
+  console.log('Body recibido:', request.body);
   return new Response(data);
 }
