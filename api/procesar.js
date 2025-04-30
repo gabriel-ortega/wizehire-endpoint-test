@@ -19,7 +19,7 @@ const data = {
 // Define el endpoint (nota: SIN `/api` aquí)
 app.post('/procesar', async (req, res) => {
   console.log('Recibido body:', req.body);
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
   res.json(data);
 });
 
