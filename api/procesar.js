@@ -7,14 +7,14 @@
 // app.use(cors());
 // app.use(express.json()); // <--- importante para leer req.body
 
-// const data = {
-//   account: {
-//     companyId: 'newtestcompanyId123',
-//   },
-//   contact: {
-//     emailVerified: true,
-//   },
-// };
+const data = {
+  account: {
+    companyId: 'newtestcompanyId123',
+  },
+  contact: {
+    emailVerified: true,
+  },
+};
 
 // app.post('/procesar', async (req, res) => {
 //   console.log('Body recibido:', req.body);
@@ -27,6 +27,7 @@
 
 // export default serverless(app);
 
-export function GET(request: Request) {
-  return new Response('Hello from Vercel!');
+export function POST(request) {
+  console.log('Body recibido:', req.body);
+  return new Response(data);
 }
