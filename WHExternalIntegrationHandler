@@ -1,0 +1,106 @@
+public class ExternalIntegrationHandler {
+
+    @future(callout=true)
+    public static void processOpportunities(List<Id> oppIds) {
+       List<Opportunity> opps = [SELECT 
+    Id, 
+    Name, 
+    StageName, 
+    AccountId, 
+    Account.Name, 
+    Account.Industry,
+    Account.NumberOfEmployees, 
+    Account.Tier__c, 
+    Account.WH_Fit_Score__c,
+    
+    // Primary_Contact__c,
+    // Primary_Contact__r.Name,
+    // Primary_Contact__r.Email,
+    
+    Billing_Contact__c,
+    Billing_Contact__r.Name,
+    Billing_Contact_Email__c,
+    Billing_Contact_Phone__c,
+    
+    Decision_Maker__c,
+    Decision_Maker__r.Name,
+    
+    Pricing_Tier__c,
+    Contract_Start_Date__c,
+    Contract_End_Date__c,
+    Contract_Length__c,
+    Number_of_Accounts__c,
+    Can_add_Sub_accounts_staffing__c,
+    Number_of_Markets__c,
+    Names_of_Markets__c,
+    Job_postings_per_Account_Market__c,
+    Agreement_Type__c
+FROM Opportunity
+WHERE Id IN :oppIds];
+
+        for (Opportunity opp : opps) {
+            // Creat JSON payload
+            Map<String, Object> payload = new Map<String, Object>{
+                'opportunity' => new Map<String, Object>{
+                    'id' => opp.Id,
+                    'name' => opp.Name,
+                    'stage' => opp.StageName
+                },
+                'account' => new Map<String, Object>{
+                    'id' => opp.AccountId,
+                    'name' => opp.Account.Name
+                },
+               'contact' => new Map<String, Object>{
+    'id' => opp.Decision_Maker__c
+}
+            };
+
+            String jsonPayload = JSON.serialize(payload);
+
+            HttpRequest req = new HttpRequest();
+            // req.setEndpoint('https://tu-api-externa.com/proceso');
+            req.setEndpoint('https://wizehire-endpoint-test-git-main-gabriel-ortegas-projects.vercel.app/procesar');
+            req.setMethod('POST');
+            req.setHeader('Content-Type', 'application/json');
+            req.setBody(jsonPayload);
+
+            Http http = new Http();
+            HTTPResponse res = http.send(req);
+
+//             assuming 
+//             {
+//   "account": {
+//     "companyId": "newtestcompanyId123"
+//   },
+//   "contact": {
+//     "emailVerified": true
+//   }
+// }
+
+
+            if (res.getStatusCode() == 200) {
+                Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+
+                // Parsear campos devueltos
+                Map<String, Object> accData = (Map<String, Object>) responseMap.get('account');
+                Map<String, Object> contactData = (Map<String, Object>) responseMap.get('contact');
+
+                Account accToUpdate = new Account(
+                    Id = opp.AccountId,
+                    // Custom_Field__c = (String) accData.get('customField') // ejemplo
+                    WH_Company_ID__c = (String) accData.get('companyId') // ejemplo
+                );
+
+                Contact conToUpdate = new Contact(
+                    Id = opp.Decision_Maker__c,
+                    // Some_Field__c = (String) contactData.get('someField') // ejemplo
+                    WH_Email_Verified__c = (Boolean) contactData.get('emailVerified') // ejemplo
+                );
+
+                update new List<SObject>{ accToUpdate, conToUpdate };
+            } else {
+                System.debug('Error en API: ' + res.getStatusCode() + ' - ' + res.getBody());
+            }
+        }
+    }
+}
