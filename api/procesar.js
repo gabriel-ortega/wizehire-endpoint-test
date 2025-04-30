@@ -29,5 +29,6 @@ const data = {
 
 export function POST(request) {
   console.log('Body recibido:', request.body);
-  return new Response(data);
+  // return new Response(data);
+  return new Response("hello world");
 }
