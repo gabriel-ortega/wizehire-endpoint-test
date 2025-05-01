@@ -10,7 +10,7 @@ export async function POST(request) {
 
   const data = {
     account: {
-      companyId: 'newtestcompanyId123',
+      companyId: 'testcompanyId123',
     },
     contact: {
       emailVerified: true,
