@@ -59,7 +59,7 @@ WHERE Id IN :oppIds];
 
             HttpRequest req = new HttpRequest();
             // req.setEndpoint('https://tu-api-externa.com/proceso');
-            req.setEndpoint('https://wizehire-endpoint-test-git-main-gabriel-ortegas-projects.vercel.app/procesar');
+            req.setEndpoint('https://wizehire-endpoint-test.vercel.app/api/procesar');
             req.setMethod('POST');
             req.setHeader('Content-Type', 'application/json');
             req.setBody(jsonPayload);
