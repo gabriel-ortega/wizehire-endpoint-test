@@ -6,7 +6,7 @@ export async function POST(request) {
   const body = await request.json();
   console.log('Body recibido:', body);
 
-  await delay(300); // espera 300 ms
+  await delay(10000); // Simula un retraso de 10 segundos 
 
   const data = {
     account: {
