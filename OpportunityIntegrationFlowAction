@@ -1,0 +1,21 @@
+public class OpportunityWHIntegrationFlowAction {
+
+    public class InputWrapper {
+        @InvocableVariable(required=true)
+        public Id opportunityId;
+    }
+
+    @InvocableMethod(label='Send data to API')
+    public static void sendToExternalSystem(List<InputWrapper> inputList) {
+        List<Id> oppIds = new List<Id>();
+        for (InputWrapper input : inputList) {
+            if (input.opportunityId != null) {
+                oppIds.add(input.opportunityId);
+            }
+        }
+
+        if (!oppIds.isEmpty()) {
+            OpportunityWHIntegrationHandler.processOpportunities(oppIds); // método @future
+        }
+    }
+}

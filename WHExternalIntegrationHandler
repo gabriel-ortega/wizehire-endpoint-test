@@ -1,4 +1,4 @@
-public class ExternalIntegrationHandler {
+public class OpportunityWHIntegrationHandler {
 
     @future(callout=true)
     public static void processOpportunities(List<Id> oppIds) {
@@ -13,9 +13,9 @@ public class ExternalIntegrationHandler {
     Account.Tier__c, 
     Account.WH_Fit_Score__c,
     
-    // Primary_Contact__c,
-    // Primary_Contact__r.Name,
-    // Primary_Contact__r.Email,
+    Account.Primary_Contact__c,
+    Account.Primary_Contact__r.Name,
+    Account.Primary_Contact__r.Email,
     
     Billing_Contact__c,
     Billing_Contact__r.Name,
@@ -44,15 +44,38 @@ WHERE Id IN :oppIds];
                 'opportunity' => new Map<String, Object>{
                     'id' => opp.Id,
                     'name' => opp.Name,
-                    'stage' => opp.StageName
+                    'stage' => opp.StageName,
+                    'pricingTier' => opp.Pricing_Tier__c,
+                    'contractStartDate' => opp.Contract_Start_Date__c, 
+                    'contractEndDate' => opp.Contract_End_Date__c,
+                    'contractLength' => opp.Contract_Length__c,
+                    'numberOfAccounts' => opp.Number_of_Accounts__c,
+                    'canAddSubAccountsStaffing' => opp.Can_add_Sub_accounts_staffing__c,
+                    'numberOfMarkets' => opp.Number_of_Markets__c,
+                    'namesOfMarkets' => opp.Names_of_Markets__c,
+                    'jobPostingsPerAccountMarket' => opp.Job_postings_per_Account_Market__c,
+                    'agreementType' => opp.Agreement_Type__c,
+                    'billingContact' => new Map<String, Object>{
+                        'id' => opp.Billing_Contact__c,
+                        'name' => opp.Billing_Contact__r.Name,
+                        'email' => opp.Billing_Contact_Email__c,
+                        'phone' => opp.Billing_Contact_Phone__c
+                    },
+                    'decisionMakerContact' => opp.Decision_Maker__c
                 },
                 'account' => new Map<String, Object>{
                     'id' => opp.AccountId,
-                    'name' => opp.Account.Name
-                },
-               'contact' => new Map<String, Object>{
-    'id' => opp.Decision_Maker__c
-}
+                    'name' => opp.Account.Name,
+                    'industry' => opp.Account.Industry,
+                    'numberOfEmployees' => opp.Account.NumberOfEmployees,
+                    'tier' => opp.Account.Tier__c,
+                    'whFitScore' => opp.Account.WH_Fit_Score__c,
+                    'primaryContact' => new Map<String, Object>{
+                        'id' => opp.Account.Primary_Contact__c,
+                        'name' => opp.Account.Primary_Contact__r.Name,
+                        'email' => opp.Account.Primary_Contact__r.Email
+                    }
+                }
             };
 
             String jsonPayload = JSON.serialize(payload);
@@ -88,7 +111,7 @@ WHERE Id IN :oppIds];
                 Account accToUpdate = new Account(
                     Id = opp.AccountId,
                     // Custom_Field__c = (String) accData.get('customField') // ejemplo
-                    WH_Company_ID__c = (String) accData.get('companyId') // ejemplo
+                    Wizehire_DB_Company_ID__c = (String) accData.get('companyId') // ejemplo
                 );
 
                 Contact conToUpdate = new Contact(
